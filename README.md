@@ -1,22 +1,22 @@
-# DNSC 6920 - Big Data - Summer 2017 <br/> Assignment # 1 <br/> Due Sunday June 18, 2017 at 11:59pm
+# DNSC 6920 - Big Data - Summer 2017 <br/> Prof. Marck Vaisman <br/> Assignment # 1 <br/> Due Sunday June 18, 2017 at 11:59pm <br/> 25 points
 
 
 ## Getting started with AWS and Hadoop
 
-In this first assignment, you will get used to working with AWS and other command line stuff. You will start an EMR cluster, list files, clone repositories, run a MapReduce job, put data into your cluster, and more. The tools you will be using in this 
+In this first assignment, you will get used to working with AWS and other command line stuff. You will start an EMR cluster, list files, clone repositories, run a MapReduce job, put data into your cluster, and more. The tools you will be using in this assignment are:
+
 * Git (command line)
 * SSH (making keys and logging in to remote systems)
 * AWS (creating VMs)
 * S3  (Fetching data, creating a bucket, storing data)
-* Hadoop, HDFS, MapReduce
+* Hadoop, HDFS, MapReduce, YARN
+* Writing mapper and reducer programs in R or Python to use with Hadoop Streaming 
 
 **Note:** The code has only been tested on MacOS and Linux. If you are using Windows, we recommend that you exclusively solve the homework in a virtual machine at Amazon, and that you only use your Windows computer for logging in to the remote server.
 
-
 ## Github Classroom 
 
-You will be using [Github Clasroom](http://clasroom.github.com) for assignments. By using *git* and *Github* you will learn how to use this tool which is very useful for version control and should be a part of your analytics workflow. Also, I created a private repository for this course and that way your information remains private. The way it works is that by accepting the invitation to the Github Classroom that you received in your email, you will create a private repository within your Github account that is based on the repository for the problem set. Once this private repository is created in your Github account, you will be able to clone it to either your local machine as well as your cluster, and make changes to files, and submit your assignments via this way.
-
+You will be using [Github Clasroom](http://clasroom.github.com) for assignments. By using *git* and *Github* you will learn how to use this tool which is used for version control and should be a part of your analytics workflow. Also, I created a private repository for this course and that way your information remains private. The way it works is that by accepting the invitation to the Github Classroom that you received in your email, you will create a private repository within your Github account that is based on the repository for the problem set. Once this private repository is created in your Github account, you will be able to clone it to either your local machine as well as your cluster, and make changes to files, and submit your assignments via this way.
 
 ## Setting up GitHub
 
@@ -34,12 +34,18 @@ Before you begin using git and Github, you will need to create a Github account 
 Hi wahalulu! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
+### Git Tutorial
+
+I found a very useful Git tutorial which is somewhat humourous. I think it is worth it for you to read through this tutorial: [git - the simple guide](http://rogerdudler.github.io/git-guide/).
+
 ### Using ssh agent
 
 One thing to keep in mind is that whenever you want to use your Github repository on your cloud resources, you will need to connect to your remote machines and pass your ssh private key. This is very easy to do:
 
 * Before you connect to your remote machine, type `ssh-add` in your terminal. You will get a confirmation that looks something like this:
-```bash
+
+```
+➜  ~ ssh-add 
 Identity added: /Users/marck/.ssh/id_rsa (/Users/marck/.ssh/id_rsa)
 ```
 * You need to use the `-A` parameter in your ssh command: `ssh -A loginname@remote.machine.ip`
@@ -48,7 +54,7 @@ Identity added: /Users/marck/.ssh/id_rsa (/Users/marck/.ssh/id_rsa)
 ### Cloning your repository
 
 To clone your assignment repository on your local or remote machine, you need to use the following command:
-`git clone git@github.com:my-repository-path/name.git`. Note: each student's repository name will be different and unique. and make sure you do it from your home directory.
+`git clone git@github.com:my-repository-path/name.git`. Note: each student's repository name will be different and unique. Make sure you clone your repository from your home directory (on the remote machines) to keep things simple.
 
 
 ## Practice Lab (not graded)
@@ -58,13 +64,21 @@ To clone your assignment repository on your local or remote machine, you need to
 * Once logged on, install git on your cluster's master node: `sudo yum install -y git`
 * Make sure that your ssh agent was forwarded. Test with `ssh -T git@github.com`
 * Clone your repository: `git@github.com:my-repository-path/name.git`
+* List the files in your cluster's HDFS (will be empty). There are two ways to do it, both are equivalent:
+	* Type `hdfs dfs -ls` 
+	* Type `hadoop fs -ls`
+* List the files in the course S3 bucket `s3://gwu-bigdata/`. There are two ways to do this:
+	* Using the Hadoop file commands which also work with S3. You can list the contents of
+	* Using the AWS Command Line interface which is installed by default on all AWS resources. This is a Python 
 
 ### 
 
 
 
+## Problem 1
 
-For the following problems, we will be working with various text files stored on S3 that are of in the 1-100GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
+
+For the following problems, you will be working with various text files stored on S3 that are of in the 1-50 GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
 
     YYYY-MM-DDTHH:MM:SSZ fnard:10 fnok:4 cark:2 gnuck:9
 
@@ -160,24 +174,6 @@ In this assignment you will learn the basics of MapReduce. You will do this with
 3. We will perform a logfile analysis, using web logs from from the website [https://forensicswiki.org/](https://forensicswiki.org/) between TKDATE and TKDATE. We will generate a report of the number of web "hits" for each month in the period under analysis.
 4. We will then introduce the concept of the _combiner_, which is a reducer that runs on each mapper before the keys are combined globally. We will use the combiner to implement an efficient "top-10" pattern that computes the top-10 on each node, minimizing the amount of data that is transfered.
 
-## Part 1: Creating your first EMR cluster.
-
-1. If you VMs from Assignment #1 are still running, log into them and make sure that the git repositories are committed and pushed back to your git server.  (Be sure to use `git status` to see if there are any files that need to be added to the git repository with `git add`.)
-2. Log into the [Amazon Web Services console](https://aws.amazon.com/) and make sure that your prevous VMs are shut down. 
-3. Log into the [Elasitic Map Reduce console](https://console.aws.amazon.com/elasticmapreduce/home?region=us-east-1#) and create a cluster. Below we walk you through the "Quick options."
-
-* Log to S3
-* Create a cluster for Core Hadoop.
-* Use m3.xlarge with 3 instances (1 master and 2 core nodes)
-* Use your existing EC2 key pair (hopefully you still have access to the private key!)
-
-4. Click on `AWS CLI export` and copy the command line into the file [q1.txt](q1.txt) in this directory.  Answer the questions in the file.
-5. Log into the head end node ssh. Note: *git* will not be installed on the EMR cluster, but *python 3.4* is installed by default!  (We just discovered this, and we're thrilled!)
-6. Run the command `df -h` to see the drives attached to your virtual machine. 
-7. Review the [YARN Commands](https://hadoop.apache.org/docs/r2.7.3/hadoop-yarn/hadoop-yarn-site/YarnCommands.html) on the Apache Hadoop website.  Run the `yarn version` command to see which version of YARN you are using. Run the `yarn node -list` comkmand to see the nodes that are installed on your cluster. 
-
-*Yea! You are now ready to use MapReduce!*
-
 ## Part 2: Basic Filtering with Map Reduce
 
 In this section we will replicate the filtering project of Assignment #1, but we'll do it with [Hadoop Streaming](https://hadoop.apache.org/docs/r2.7.3/hadoop-streaming/HadoopStreaming.html).  (To see how Hadoop Streaming has been modified for Amazon Map Reducer, please review the [Amazon EMR documentation](http://docs.aws.amazon.com/emr/latest/ReleaseGuide/UseCase_Streaming.html)) Because of the minimal amount of computation done, these tasks are entirely I/O-bound. 
@@ -232,7 +228,7 @@ Turn in the file `q3_results.txt`, which should include the results of all of yo
 
 ## Part 4: Logfile analysis
 
-The file s3://gu-anly502/logs/forensicswiki.2012.txt is a year's worth of Apache logs for the forensicswiki website. Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
+The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apache logs for the forensicswiki website. Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
 
 If you look at the first few lines of the log file, you should be able to figure out the format. You can view the first 10 lines of the file with the command:
 
@@ -240,7 +236,7 @@ If you look at the first few lines of the log file, you should be able to figure
 
 At this point, you should understand why this command works.
 
-Our goal in this part is to write a map/reduce programs using Python3.4 and Hadoop Streaming that will report the number of hits for each month. For example,
+Your goal in this part is to write maper and reducer programs using Python3.4 and Hadoop Streaming that will report the number of hits for each month. For example,
 if there were 10,000 hits in the month January 2010 and 20,000 hits in
 the month February 2010, your output should look like this:
 
@@ -264,25 +260,8 @@ Here are some hints to solve the problem:
 
 Turn in `q4_mapper.py`, `q4_reducer.py`, and `q4_run.py` in addition to `q4_monthly.txt`.
 
-## Part 5: EXTRA CREDIT Finding the top-10 hits
-In this final exercise, you will generate a bar graph of the top-10 hits. To do this, you will need to  create two map-reduce jobs:
-
-* Job #1 will read the entire logfile and output a list of each URL and the total number of hits.
-
-* Job #2 will read the file that includes each URL and the top number of its, and extract the top 10.
-
-* Finally, you will then plot the bargraph. You'll want to do that with matplotlib. Although you might be tempted to have the plotting take place as part of the mapreduce jobs, it's better to have the mapreduce jobs store results in an intermediate file and have a separate program that does the plotting.
-
-You may find this easier to do with the `MRJOB` framework discussed in class L03 than with Hadoop streaming.  
-
-* Modify the Makefile and add the files and plot results.
-
-* Be sure to turn in a file called q5_explaination.txt that explains how you solved this problem.
-
-This problem is worth another 20%.
 
 ## Make submit and submit!
 
 As before, you should submit a single ZIP file. Please use the `Makefile` and the `validator.py` to make the Makefile. Do this by typing `make submit`. Be sure to edit `../user.cfg` to put in your personal information.
-
 
