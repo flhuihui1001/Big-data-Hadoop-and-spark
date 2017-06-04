@@ -3,10 +3,7 @@
 
 ## Getting started with AWS and Hadoop
 
-The purpose of this assignment is for you to become familiar with Amazon Web Services (AWS) and to run your first map/reduce job.
-
-## Required skills and technologies
-
+In this first assignment, you will get used to working with AWS and other command line stuff. You will start an EMR cluster, list files, clone repositories, run a MapReduce job, put data into your cluster, and more. The tools you will be using in this 
 * Git (command line)
 * SSH (making keys and logging in to remote systems)
 * AWS (creating VMs)
@@ -18,19 +15,19 @@ The purpose of this assignment is for you to become familiar with Amazon Web Ser
 
 ## Github Classroom 
 
-We will be using [Github Clasroom](http://clasroom.github.com) for assignments. By using *git* and *Github* you will learn how to use this tool which is very useful for version control and should be a part of your analytics workflow. Also, I created a private repository for this course and that way your information remains private. The way it works is that by accepting the invitation to the Github Classroom that you received in your email, you will create a private repository within your Github account that is based on the repository for the problem set. Once this private repository is created in your Github account, you will be able to clone it to either your local machine as well as your cluster, and make changes to files, and submit your assignments via this way.
+You will be using [Github Clasroom](http://clasroom.github.com) for assignments. By using *git* and *Github* you will learn how to use this tool which is very useful for version control and should be a part of your analytics workflow. Also, I created a private repository for this course and that way your information remains private. The way it works is that by accepting the invitation to the Github Classroom that you received in your email, you will create a private repository within your Github account that is based on the repository for the problem set. Once this private repository is created in your Github account, you will be able to clone it to either your local machine as well as your cluster, and make changes to files, and submit your assignments via this way.
 
 
 ## Setting up GitHub
 
-Before we begin using git and Github, you will need to create a Github account if you don't already have one. Once you create your account, you will need to upload the **public ssh key** that we created for accessing the AWS resources. By adding your public ssh key to your Github account, you will be able to push back to the repository.
+Before you begin using git and Github, you will need to create a Github account if you don't already have one. Once you create your account, you will need to upload the **public ssh key** that you created for accessing your AWS resources. By adding your public ssh key to your Github account, you will be able to push changes back to the repository without having to logig to GitHub.
 
 * Login to your GitHub account and go to "Settings"
 * In the "Settings" area, select "SSH and GPG keys"
 * Click on "New SSH key"
 * Create a title for your key (the name is whatever you want - just as in AWS)
 * Copy the contents of your `id_rsa.pub` file into the "Key" box
-* Once you do this, you can test that your ssh key work with GitHub by opening a Terminal and typing `ssh -T git@github.com`. If you are successful, you will see a meesage like this:
+* Once you do this, you can test that your ssh key works with GitHub by opening a Terminal and typing `ssh -T git@github.com`. If you are successful, you will see a message like this:
 
 ```bash
 ➜  ~ ssh -T git@github.com
@@ -51,21 +48,23 @@ Identity added: /Users/marck/.ssh/id_rsa (/Users/marck/.ssh/id_rsa)
 ### Cloning your repository
 
 To clone your assignment repository on your local or remote machine, you need to use the following command:
-`git clone 
+`git clone git@github.com:my-repository-path/name.git`. Note: each student's repository name will be different and unique. and make sure you do it from your home directory.
 
 
-## Question 2
- With your AWS account, create a [**t2.nano**](https://aws.amazon.com/ec2/instance-types/) or **t2.micro** instance and log into it. This instance t2.nano instance has 0.5GiB of memory, uses EBS for local storage and costs 0.59 cents/hour ($51/year), but the t2.micro instance is eligible for the _free tier_ while the t2.nano is not. Either works well. (Note: if you need more memory but it doesn't need to be fast, you can add virtual memory to this instance by creating a swap file on the EBS device. However, for serious work you would want to create a larger instance.) 
+## Practice Lab (not graded)
 
- Install Python3.5 and the Python package `PyYAML`. Do this with the commands:
-    sudo yum -y install python35 python35-pip
-    sudo pip-3.5 install PyYAML
+* Start an EMR cluster using the AWS Console with 1 master and 2 core nodes, just like we did in class.
+* Once the cluster is up and running, type `ssh-add` and then ssh into the master node, remember to use the `-A` parameter `ssh -A hadoop@ip-of-master-node`. 
+* Once logged on, install git on your cluster's master node: `sudo yum install -y git`
+* Make sure that your ssh agent was forwarded. Test with `ssh -T git@github.com`
+* Clone your repository: `git@github.com:my-repository-path/name.git`
 
-Use the `traceroute` command and create a traceroute to the host ns1.georgetown.edu, one of the Georgetown University Internet name servers. (Unlikely [www.georgetown.edu](http://www.georgetown.edu), which is hosted at Akami, and [cs.georgetown.edu](http://cs.georgetown.edu), which is hosted at Amazon AWS, ns1.georgetown.edu is hosted at Georgetown itself.) Save the traceroute in a file called `q2.txt`. You can do that with this command:
+### 
 
-    traceroute ns1.georgetown.edu > q2.txt
 
-In this part of the problem set, we will be working with a text file in the 1-100GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
+
+
+For the following problems, we will be working with various text files stored on S3 that are of in the 1-100GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
 
     YYYY-MM-DDTHH:MM:SSZ fnard:10 fnok:4 cark:2 gnuck:9
 
