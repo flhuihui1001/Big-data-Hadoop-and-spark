@@ -68,11 +68,24 @@ To clone your assignment repository on your local or remote machine, you need to
 	* Type `hdfs dfs -ls` 
 	* Type `hadoop fs -ls`
 * List the files in the course S3 bucket `s3://gwu-bigdata/`. There are two ways to do this:
-	* Using the Hadoop file commands which also work with S3. You can list the contents of
-	* Using the AWS Command Line interface which is installed by default on all AWS resources. This is a Python 
+	* Using the [Hadoop Filesystem Shell Commands](https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/FileSystemShell.html) which also work with S3. You can list the contents of of a bucket by typing `hdfs -ls s3://gwu-bigdata/`
 
-### 
+		```
+		[hadoop@ip-172-31-76-170 ~]$ hdfs dfs -ls s3://gwu-bigdata/
+		Found 3 items
+		drwxrwxrwx   - hadoop hadoop          0 1970-01-01 00:00 s3://gwu-bigdata/data
+		drwxrwxrwx   - hadoop hadoop          0 1970-01-01 00:00 s3://gwu-bigdata/data-gz
+		drwxrwxrwx   - hadoop hadoop          0 1970-01-01 00:00 s3://gwu-bigdata/data-lzo
+		```
 
+	* Using the [AWS Command Line Interface](https://aws.amazon.com/cli/) which is installed by default on all AWS resources. This is a Python based utility.
+
+		```
+		[hadoop@ip-172-31-76-170 ~]$ aws s3 ls s3://gwu-bigdata/
+                           PRE data-gz/
+                           PRE data-lzo/
+                           PRE data/
+		```                           
 
 
 ## Problem 1
@@ -103,16 +116,6 @@ Your job is to find all of the times where the four instruments malfunctioned to
 
 ## Question 3
 
-First, make sure that you are able to run `aws` commands on your instance by trying to list the contents of the course S3 bucket `s3://gu-anly502/`. Below we use the `aws s3 ls` command to do that:
-
-	[ec2-user@ip-172-31-52-185 A1]$ aws s3 ls s3://gu-anly502/
-	                           PRE A1/
-	                           PRE gutenberg/
-	                           PRE maxmind/
-	2016-03-05 14:21:58       1150 bootstrap-.bashrc
-	2016-03-21 02:58:57       2735 bootstrap.sh
-	2016-03-05 02:18:43       1237 startup.sh
-	[ec2-user@ip-172-31-52-185 A1]$
 
 In this question we will work with the 4.8GB file `s3://gu-anly502/A1/quazyilx1.txt`.
 
@@ -155,8 +158,6 @@ Create a t2.large instance and repeat the streaming exercise. Store the results 
     malfunctions: 42
 
 ## Question 6
-
-Finally, we want you to give us a list of the malfunction entries. You will place them in a file and store that file on S3. Place the malfunction entries in a file called `q6-malfunctions.txt`.
 
 
 ## ANLY 502 Assignment 2: Learning MapReduce (V1.4)
@@ -208,25 +209,8 @@ hadoop jar /usr/lib/hadoop/hadoop-streaming-2.7.3-amzn-1.jar \
 
 6. Repeat the experiment with 2 and 4 Task nodes. The prototype [run.py](run.py) program that we have given you computes the clock time that the job took and records the number of nodes in an output file. We have also created a symbolic link called [q2_python.py](q2_python.py) that points to [run.py](run.py). When the [q2_python.py](q2_python.py) link is given to the Python language, the [run.py](run.py) sees the name that it has been called with and stores the results in a file called [q2_results.txt](q2_results.txt). The `--plot` option of the program should read this file and plots it using [matplotlib](http://matplotlib.org/). However, currently it doesn't. Instead, there is a program called [grapher.py](grapher.py) that generates a plot with fake data that is hard-coded into the file. We will modify the program to do the plotting by the end of the first weekend of the problem set, but you can do it yourself if you wish the experience! To use this program, you will need to either install matplotlib on your head-end, or else you will need to commit the results to your private git repository, pull the results to a system that has matplotlib installed, and generate the plot there. Turn in the files `q2_results.txt`, `q2_plot.png` and `q2_plot.pdf`, showing how the speed of this system responds to increases in the number of nodes.
 
-## Part 3: HDFS
 
-As in Part 2, these steps are entirely I/O bound. However this time you are able to control the I/O performance of your system.
-
-1. Resize your cluster and remove all of the Task nodes.  You now have 3 nodes: 1 master and 2 core.
-
-2. Copy the file s3://gu-anly502/A1/quazyilx3.txt to your local HDFS system.
-
-3. The program [q3_python.py](q3_python.py) is another link to the program (run.py)[run.py] but stores its results in the file [q3_results.txt](q3_results.txt). Run the program and compute how long it takes to run.
-
-4. When you copied the file `quazyilx3.txt` to your HDFS system, it was split into blocks and stored on three different systems. Delete the file in HDFS and resize your cluster so that it has 5 Core nodes.  Copy the file `quazyilx3.txt` back to your HDFS system; now it will be stored on 6 nodes (the 1 master and the 5 core nodes).  Re-run [q3_python.py](q3_python.py) and see how the time that the program takes changes.
-
-5. Delete the file `quazyilx3.txt` again, resize your cluster to have 10 Core nodes, copy the file `quazyilx3.txt` back to your cluster, and re-run [q3_python.py](q3_python.py). This determines how long the process takes with the file stored on 11 HDFS nodes.
-
-Commit your results to your git repository and push the repository to your git server. Shut down your cluster when you are done.
-
-Turn in the file `q3_results.txt`, which should include the results of all of your experimental runs.
-
-## Part 4: Logfile analysis
+## Part XX: Logfile analysis
 
 The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apache logs for the forensicswiki website. Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
 
@@ -256,12 +240,11 @@ Here are some hints to solve the problem:
 
 * Once the results are stored in in HDFS, you can output the results the `hdfs dfs -cat` command piped into a Unix sort.
 
-1. Store the output in the file `q4_monthly.txt` . 
+1. Store the output in the file `logfile_results.txt` . 
 
 Turn in `q4_mapper.py`, `q4_reducer.py`, and `q4_run.py` in addition to `q4_monthly.txt`.
 
 
-## Make submit and submit!
+## Submitting your assignment
 
-As before, you should submit a single ZIP file. Please use the `Makefile` and the `validator.py` to make the Makefile. Do this by typing `make submit`. Be sure to edit `../user.cfg` to put in your personal information.
-
+Since we are using Github classroom, you will submit your assignment by "pushing" to your repo
