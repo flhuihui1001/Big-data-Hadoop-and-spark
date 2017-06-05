@@ -91,7 +91,7 @@ To clone your assignment repository on your local or remote machine, you need to
 ## Problem 1
 
 
-For the following problems, you will be working with various text files stored on S3 that are of in the 1-50 GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
+For this problem, you will be working with various text files stored on S3 that are of in the 1-50 GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
 
     YYYY-MM-DDTHH:MM:SSZ fnard:10 fnok:4 cark:2 gnuck:9
 
@@ -103,7 +103,17 @@ The quazyilx has been malfunctioning, and occasionally generates output with a `
 
     2015-12-10T08:40:10Z fnard:-1 fnok:-1 cark:-1 gnuck:-1
 
-Your job is to find all of the times where the four instruments malfunctioned together. The easy way to do this is with the `grep` command. Unfortunately, as you can see, the file is *big*. We have stored the file in Amazon S3. There are three ways that you can filter to find the bad records:
+There are four different versions of the _quazyilx_ file, each of different size. As you can see in the output below the file sizes are ~50MB, ~5GB, ~19GB and ~39GB. The only difference is the lenght of the number of records, the file structure is the same. 
+
+```
+[hadoop@ip-172-31-76-170]$ hdfs dfs -ls s3://gwu-bigdata/data/quaz*.txt
+-rw-rw-rw-   1 hadoop hadoop   52443735 2017-05-19 13:35 s3://gwu-bigdata/data/quazyilx0.txt
+-rw-rw-rw-   1 hadoop hadoop 5244417004 2017-05-19 13:35 s3://gwu-bigdata/data/quazyilx1.txt
+-rw-rw-rw-   1 hadoop hadoop 19397230888 2017-05-19 13:35 s3://gwu-bigdata/data/quazyilx2.txt
+-rw-rw-rw-   1 hadoop hadoop 39489364082 2017-05-19 13:35 s3://gwu-bigdata/data/quazyilx3.txt
+```
+
+Your job is to find all of the times where the four instruments malfunctioned together using three different methods. The easiest way to do this is with the `grep` command. Unfortunately, as you can see, the file is *big*. We have stored the file in Amazon S3. There are three ways that you can filter to find the bad records:
 
 ***Method 1*** - copy the file to your AWS VM (slow!) and use
    `grep`. (If you need to count, you can also use `wc`). 
@@ -113,9 +123,6 @@ Your job is to find all of the times where the four instruments malfunctioned to
     aws s3 cp s3://<bucket>/<filename> -
 
 ***Method 3*** - Use Hadoop running on one or more VMs to search the file in parallel, with each Hadoop worker starting at a different point.
-
-## Question 3
-
 
 In this question we will work with the 4.8GB file `s3://gu-anly502/A1/quazyilx1.txt`.
 
@@ -130,8 +137,6 @@ Determine the amount of time that Method 1 takes by copying the file `s3://gu-an
     malfunctions: 42                            # in lines
 
 (Of course, the numbers will be different in your case.) If you are interested, this file is in [YAML](http://yaml.org/) format. The information after the `#` are comments and ignored.
-
-## Question 4
 
 Determine the amount of time that Method 1 takes by streaming the file from S3 to your VM and reporting the amount of time that the search takes and the number of lines indicating a malfunction. Perform the streaming by using the `aws s3 cp` command and copying from the S3 URL to the device `-`, and then piping the result into a `grep` process.
 
@@ -157,23 +162,12 @@ Create a t2.large instance and repeat the streaming exercise. Store the results 
     streaming: 150
     malfunctions: 42
 
-## Question 6
-
-
-## ANLY 502 Assignment 2: Learning MapReduce (V1.4)
-
-## Required skills and technologies
-
-* YARN
-* Hadoop
-* MapReduce
 
 In this assignment you will learn the basics of MapReduce. You will do this with four exercises: 
 
 1. We will rework the filtering exercise of [Assignment 1](../A1/Readme.md) on Hadoop MapReduce using Hadoop's "Streaming"API. We will do this with a _mapper_ that filters out the lines that are not wanted, and a _reducer_ that simply copies from input to output.
 2. We will then perform the classic "word count" exercise, which creates a histogram of all the words in a text document. The mapper will map single lines to individual words, and the reducer will count the number of words.
 3. We will perform a logfile analysis, using web logs from from the website [https://forensicswiki.org/](https://forensicswiki.org/) between TKDATE and TKDATE. We will generate a report of the number of web "hits" for each month in the period under analysis.
-4. We will then introduce the concept of the _combiner_, which is a reducer that runs on each mapper before the keys are combined globally. We will use the combiner to implement an efficient "top-10" pattern that computes the top-10 on each node, minimizing the amount of data that is transfered.
 
 ## Part 2: Basic Filtering with Map Reduce
 
@@ -224,11 +218,10 @@ Your goal in this part is to write maper and reducer programs using Python3.4 an
 if there were 10,000 hits in the month January 2010 and 20,000 hits in
 the month February 2010, your output should look like this:
 
-<pre>
     2010-01 10000
     2010-02 20000
     ...
-</pre>
+
 
 Where `10000` and `20000` are replaced by the actual number of hits in each month.
 
