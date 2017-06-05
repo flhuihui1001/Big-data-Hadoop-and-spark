@@ -3,7 +3,7 @@
 
 ## Getting started with AWS and Hadoop
 
-In this first assignment, you will get used to working with AWS and other command line stuff. You will start an EMR cluster, list files, clone repositories, run a MapReduce job, put data into your cluster, and more. The tools you will be using in this assignment are:
+In this first assignment, you will get used to working with AWS, the command line, Hadoop and MapReduce. You will start an EMR cluster, list files, clone repositories, run a MapReduce job, put data into your cluster, and more. The tools you will be using in this assignment are:
 
 * Git (command line)
 * SSH (making keys and logging in to remote systems)
@@ -54,11 +54,12 @@ Identity added: /Users/marck/.ssh/id_rsa (/Users/marck/.ssh/id_rsa)
 ### Cloning your repository
 
 To clone your assignment repository on your local or remote machine, you need to use the following command:
-`git clone git@github.com:my-repository-path/name.git`. Note: each student's repository name will be different and unique. Make sure you clone your repository from your home directory (on the remote machines) to keep things simple.
+`git clone git@github.com:my-repository-path/name.git`. Note: each student's repository name will be different and unique. Make sure you clone your repository from your home directory (on the remote machines) to keep things simple and will create a sub-directory within your home directory that contains the contents of your repository.
+
+Once you clone your repository, change directories and work within the repository directory: `cd my-repository-path`.
 
 
-## Practice Lab (not graded)
-
+## Practice Lab 
 * Start an EMR cluster using the AWS Console with 1 master and 2 core nodes, just like we did in class.
 * Once the cluster is up and running, type `ssh-add` and then ssh into the master node, remember to use the `-A` parameter `ssh -A hadoop@ip-of-master-node`. 
 * Once logged on, install git on your cluster's master node: `sudo yum install -y git`
@@ -88,10 +89,16 @@ To clone your assignment repository on your local or remote machine, you need to
 		```                           
 
 
-## Problem 1
+## Problem 1 - Word Count, the "Hello World" of Hadoop
 
 
-For this problem, you will be working with various text files stored on S3 that are of in the 1-50 GB range. The file contains hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
+
+
+## Problem 2 - The _quazy_ scientific instrument
+
+### Part 1 - Testing Various Methods
+
+For this problem, you will be working with various text files stored on S3 that are of in the 1-50 GB range. The files contain hypothetic measurements of a scientific instrument called a _quazyilx_ that has been specially created for this class. Every few seconds the quazyilx makes four measurements: _fnard_, _fnok_, _cark_ and _gnuck_. The output looks like this:
 
     YYYY-MM-DDTHH:MM:SSZ fnard:10 fnok:4 cark:2 gnuck:9
 
@@ -103,7 +110,7 @@ The quazyilx has been malfunctioning, and occasionally generates output with a `
 
     2015-12-10T08:40:10Z fnard:-1 fnok:-1 cark:-1 gnuck:-1
 
-There are four different versions of the _quazyilx_ file, each of different size. As you can see in the output below the file sizes are ~50MB, ~5GB, ~19GB and ~39GB. The only difference is the lenght of the number of records, the file structure is the same. 
+There are four different versions of the _quazyilx_ file, each of different size. As you can see in the output below the file sizes are 50MB (1,000,000 rows), 4.8GB (100,000,000 rows), 18GB and 36.7GB. The only difference is the lenght of the number of records, the file structure is the same. In this problem we will work with the 4.8GB file `s3://gwu-bigdata/data/quazyilx1.txt`.
 
 ```
 [hadoop@ip-172-31-76-170]$ hdfs dfs -ls s3://gwu-bigdata/data/quaz*.txt
@@ -113,7 +120,7 @@ There are four different versions of the _quazyilx_ file, each of different size
 -rw-rw-rw-   1 hadoop hadoop 39489364082 2017-05-19 13:35 s3://gwu-bigdata/data/quazyilx3.txt
 ```
 
-Your job is to find all of the times where the four instruments malfunctioned together using three different methods. The easiest way to do this is with the `grep` command. Unfortunately, as you can see, the file is *big*. We have stored the file in Amazon S3. There are three ways that you can filter to find the bad records:
+Your job is to find all of the times where the four instruments malfunctioned together using three different methods. The easiest way to do this is with the `grep` command. Unfortunately, as you can see, the file is *big*. There are three ways that you can filter to find the bad records:
 
 ***Method 1*** - copy the file to your AWS VM (slow!) and use
    `grep`. (If you need to count, you can also use `wc`). 
@@ -124,7 +131,7 @@ Your job is to find all of the times where the four instruments malfunctioned to
 
 ***Method 3*** - Use Hadoop running on one or more VMs to search the file in parallel, with each Hadoop worker starting at a different point.
 
-In this question we will work with the 4.8GB file `s3://gu-anly502/A1/quazyilx1.txt`.
+
 
 Determine the amount of time that Method 1 takes by copying the file `s3://gu-anly502/A1/quazyilx1.txt` from S3 to your instance VM and reporting the amount of time that it takes to do the copy operation, the amount of time to takes to do the scan, and the total number of lines that indicate a malfunction. Store this in a file called `q3.txt`. Your file should have this format:
 
@@ -204,7 +211,7 @@ hadoop jar /usr/lib/hadoop/hadoop-streaming-2.7.3-amzn-1.jar \
 6. Repeat the experiment with 2 and 4 Task nodes. The prototype [run.py](run.py) program that we have given you computes the clock time that the job took and records the number of nodes in an output file. We have also created a symbolic link called [q2_python.py](q2_python.py) that points to [run.py](run.py). When the [q2_python.py](q2_python.py) link is given to the Python language, the [run.py](run.py) sees the name that it has been called with and stores the results in a file called [q2_results.txt](q2_results.txt). The `--plot` option of the program should read this file and plots it using [matplotlib](http://matplotlib.org/). However, currently it doesn't. Instead, there is a program called [grapher.py](grapher.py) that generates a plot with fake data that is hard-coded into the file. We will modify the program to do the plotting by the end of the first weekend of the problem set, but you can do it yourself if you wish the experience! To use this program, you will need to either install matplotlib on your head-end, or else you will need to commit the results to your private git repository, pull the results to a system that has matplotlib installed, and generate the plot there. Turn in the files `q2_results.txt`, `q2_plot.png` and `q2_plot.pdf`, showing how the speed of this system responds to increases in the number of nodes.
 
 
-## Part XX: Logfile analysis
+## Problem 3 - Logfile analysis
 
 The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apache logs for the forensicswiki website. Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
 
@@ -240,4 +247,4 @@ Turn in `q4_mapper.py`, `q4_reducer.py`, and `q4_run.py` in addition to `q4_mont
 
 ## Submitting your assignment
 
-Since we are using Github classroom, you will submit your assignment by "pushing" to your repo
+Since we are using Github classroom, you will submit your assignment by "pushing" to your repo on Github. I will be able to see 
