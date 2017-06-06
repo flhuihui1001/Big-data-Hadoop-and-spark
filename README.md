@@ -13,7 +13,7 @@ In this first assignment, you will get used to working with AWS, the command lin
 * Hadoop, HDFS, MapReduce, YARN
 * Writing mapper and reducer programs in R or Python to use with Hadoop Streaming 
 
-**Note:** You **must** use the Amazon Cloud resources to run all the code in the assignment. You may develop your mapper/reducer code locally on your laptop but the code still needs to be run on the cloud. 
+**You _must_ use the Amazon Cloud resources to run all the code in the assignment. You may develop your mapper/reducer code locally on your laptop but the code still needs to be run on the cloud.**
 
 ## GitHub Classroom 
 
@@ -96,11 +96,17 @@ Once you clone your repository, change directories and work within the repositor
 
 In this problem, you will run a simulated MapReduce job on a small text file. I say simulated because you will not be using Hadoop Framework to do this but rather a combination of command line functions that resemble what happens when you run a Hadoop job on a cluster on a large file.
 
-On page 50 of the textbook, there is an example of how to test your mapper and reducer. You will be doing the same approach here.
+On page 50 of the book, there is an example of how to test your mapper and reducer. You will be using the same approach here.
 
-cat flights.csv | ./mapper.py | sort | ./reducer.py
+There is a file in the repository called `Meyers.txt` which contains German text. There are two Python files: a mapper called `wordcount_mapper.py` and a reducer called `wordcount_reducer.py`. Open the files and look at the code so you get familiar with what is going on.
+
+Your job is to pipe the mapper into sort into the reducer and write the output to a file called `wordcount_results.txt`. 
+
+***
 
 **For problems 2 and 3 you can start a new cluster with 5 nodes (1 master and 4 core) or resize the cluster you started for the Practice Lab and/or Problem 1.**
+
+***
 
 ## Problem 2 - The _quazy_ scientific instrument (10 points)
 
@@ -241,3 +247,5 @@ Since we are using Github classroom, you will submit your assignment by "pushing
 	* Output is not in expected format
 	* Output is not sorted
 	* There are more files in your repository than need to be (only the files that exist now should be there. They should be changed.)
+	* Additional lines in the results files (wether empty or not)
+	
