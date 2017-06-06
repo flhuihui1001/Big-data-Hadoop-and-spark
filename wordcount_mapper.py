@@ -1,4 +1,4 @@
-#!/usr/bin/python34
+#!/usr/bin/env python
 #
 # q2_mapper.py:
 # Reads whole lines stdin; writes key/value pairs to stdout

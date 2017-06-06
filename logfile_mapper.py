@@ -1,4 +1,4 @@
-#!/usr/bin/python34
+#!/usr/bin/env python
 #
 # This file has been provided as a starting point. You need to modify this file.
 # Reads whole lines stdin; writes key/value pairs to stdout

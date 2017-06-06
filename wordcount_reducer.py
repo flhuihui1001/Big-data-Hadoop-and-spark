@@ -1,4 +1,4 @@
-#!/usr/bin/python34
+#!/usr/bin/env python
 #
 # q2_reducer.py:
 # Reads key/value pairs from stdin, writes key/value pairs to stdout
