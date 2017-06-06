@@ -94,8 +94,11 @@ Once you clone your repository, change directories and work within the repositor
 
 ## Problem 1 - Word Count, the "Hello World" of Hadoop (5 points)
 
-In this problem, you will run a simulated MapReduce job on a small text file. I say simulated because we will not be using Hadoop to do this. 
+In this problem, you will run a simulated MapReduce job on a small text file. I say simulated because you will not be using Hadoop Framework to do this but rather a combination of command line functions that resemble what happens when you run a Hadoop job on a cluster on a large file.
 
+On page 50 of the textbook, there is an example of how to test your mapper and reducer. You will be doing the same approach here.
+
+cat flights.csv | ./mapper.py | sort | ./reducer.py
 
 **For problems 2 and 3 you can start a new cluster with 5 nodes (1 master and 4 core) or resize the cluster you started for the Practice Lab and/or Problem 1.**
 
@@ -181,7 +184,7 @@ hadoop jar /usr/lib/hadoop/hadoop-streaming.jar \
 * The second line `-D mapreduce.job.reduces=0` tells the job that you want zero reduce tasks. This is a map-only job since all we are doing is filtering and not aggregating.
 * The third line `-D stream.non.zero.exit.is.failure=false` is another parameter for the streaming job which tells Hadoop to not fail on task error. This is necessary in this case because Hadoop is expecting output from every map task, but since we are filtering the data the majority of the tasks will not have an output. Without this parameter, the job will fail.
 * The fourth line `-input [[input-file]]` tells the job where your source file(s) are. These files need to be either in HDFS or S3. If you specify a directory, all files in the directory will be used as inputs
-* The fifth line `-output [[output-location]]` tells the job where to store the output of the job, either in HDFS or S3. **This parameter is just a name of a location, and it must not exist before running the job otherwise it will fail.**
+* The fifth line `-output [[output-location]]` tells the job where to store the output of the job, either in HDFS or S3. **This parameter is just a name of a location, and it must not exist before running the job otherwise the job will fail.**
 * The sixth line `-mapper "/bin/grep \"fnard:-1 fnok:-1 cark:-1 gnuck:-1\""` is the actual mapper process.
 
 When you finish running the Hadoop Streaming jobs, you will need to extract the results from **HDFS** using `hdfs dfs -cat [[location_in_hdfs]] | sort > [[output_file]]` and create and commit three files: `p2_3_results.txt`, `p2_4_results.txt`, `p2_5_results.txt`.
@@ -193,7 +196,7 @@ The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apa
 
 If you look at the first few lines of the log file, you should be able to figure out the format. You can view the first 10 lines of the file with the command:
 
-    aws s3 cp s3://gwu-bigdata/data//forensicswiki.2012.txt - | head -10
+    aws s3 cp s3://gwu-bigdata/data/forensicswiki.2012.txt - | head -10
 
 At this point, you should understand why this command works.
 
@@ -212,6 +215,14 @@ Here are some hints to solve the problem:
 * Your mapper should read each line of the input file and output a key/value pair in the form `YYYY-MM\t1` where `YYYY-MM` is the year and the month of the log file, `\t` is the tab character, and `1` is the number one.
 * Your reducer should tally up the number of hits for each key and output the results.
 * You will need to run the Hadoop Streaming job with the appropriate parameters (see Problem 2 for reference.)
+* You will need to "ship" the mapper and reducer to each node in the cluster along with the job. This is done by using the `-files` parameter, so your job submission will look something like this:
+* You should not need to use any of the `-D` parameters you used in Problem 2
+
+```
+hadoop jar /usr/lib/hadoop/hadoop-streaming.jar \
+-files file1, file2 \
+...
+```
 
 When you finish running the Hadoop Streaming jobs, you will need to extract the results from **HDFS** using `hdfs dfs -cat [[location_in_hdfs]] | sort > [[output_file]]` and create and commit `logfile_results.txt`. 
 
@@ -229,4 +240,4 @@ Since we are using Github classroom, you will submit your assignment by "pushing
 	* Instructions are not followed
 	* Output is not in expected format
 	* Output is not sorted
-	* There are more files in your repository than need to be
+	* There are more files in your repository than need to be (only the files that exist now should be there. They should be changed.)
