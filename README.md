@@ -184,11 +184,12 @@ hadoop jar /usr/lib/hadoop/hadoop-streaming.jar \
 * The fifth line `-output [[output-location]]` tells the job where to store the output of the job, either in HDFS or S3. **This parameter is just a name of a location, and it must not exist before running the job otherwise it will fail.**
 * The sixth line `-mapper "/bin/grep \"fnard:-1 fnok:-1 cark:-1 gnuck:-1\""` is the actual mapper process.
 
-When you finish running the Hadoop Streaming jobs, you will need to extract the results from HDFS using `hdfs dfs -cat [[location_in_hdfs]] > [[output_file]]` and create and commit three files: `p2_3_results.txt`, `p2_4_results.txt`, `p2_5_results.txt`.
+When you finish running the Hadoop Streaming jobs, you will need to extract the results from **HDFS** using `hdfs dfs -cat [[location_in_hdfs]] | sort > [[output_file]]` and create and commit three files: `p2_3_results.txt`, `p2_4_results.txt`, `p2_5_results.txt`.
+
 
 ## Problem 3 - Log file analysis (10 points)
 
-The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apache logs for the forensicswiki website. Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
+The file `s3://gwu-bigdata/data/forensicswiki.2012.txt` is a year's worth of Apache logs for the [forensicswiki website](http://forensicswiki.org/wiki/Main_Page). Each line of the log file correspondents to a single `HTTP GET` command sent to the web server. The log file is in the [Combined Log Format](https://httpd.apache.org/docs/1.3/logs.html#combined).
 
 If you look at the first few lines of the log file, you should be able to figure out the format. You can view the first 10 lines of the file with the command:
 
@@ -212,12 +213,20 @@ Here are some hints to solve the problem:
 * Your reducer should tally up the number of hits for each key and output the results.
 * You will need to run the Hadoop Streaming job with the appropriate parameters (see Problem 2 for reference.)
 
-Once you run your job and the results are stored in **HDFS**, you can output the results the `hdfs dfs -cat` command piped into a Unix sort.
-Store the output in the file `logfile_results.txt`. 
+When you finish running the Hadoop Streaming jobs, you will need to extract the results from **HDFS** using `hdfs dfs -cat [[location_in_hdfs]] | sort > [[output_file]]` and create and commit `logfile_results.txt`. 
 
-The files to be committed to the repository for this problem are you mapper, reducer, and `logfile_results.txt`.
+The files to be committed to the repository for this problem are your mapper, reducer, and `logfile_results.txt`.
 
 
 ## Submitting your assignment
 
 Since we are using Github classroom, you will submit your assignment by "pushing" to your repo on GitHub. You will have to commit all the files that are requested (look at the Git tutorial to learn how to commit files.) After you commit, you will push your changes to your GitHub repository. I will be able to see  
+
+## Grading Rubric
+* I will look at the results files first. If the results files are what is expected, in the proper format, sorted, etc., then you will get full credit for the problem.
+* If the expected results file is not what is expected I will look at the code and provide partial credit where applicable.
+* Points will be deducted for each the following reasons:
+	* Instructions are not followed
+	* Output is not in expected format
+	* Output is not sorted
+	* There are more files in your repository than need to be
