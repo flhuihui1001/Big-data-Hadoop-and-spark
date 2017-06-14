@@ -1,7 +1,6 @@
 2000-01-28 03:07:44 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2000-02-21 19:21:07 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2000-03-01 17:31:22 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
-<<<<<<< HEAD
 2000-04-29 03:37:34 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2000-07-08 21:27:33 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2000-08-15 19:21:29 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
@@ -189,5 +188,3 @@
 2017-03-17 04:53:34 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2017-04-08 02:26:10 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
 2017-04-21 04:57:10 fnard:-1 fnok:-1 cark:-1 gnuck:-1	
-=======
->>>>>>> b63df700a87fc5c1e18f6bf0f5108c6ed2ea68b2
