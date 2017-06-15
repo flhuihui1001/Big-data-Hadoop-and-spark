@@ -7,8 +7,6 @@
 
 import sys
 import re
-import datetime
-import calendar
 
 def main(argv):
     abbr_to_num = {name: num for num, name in enumerate(calendar.month_abbr) if num}
