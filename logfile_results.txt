@@ -12,4 +12,3 @@
 2012-12 1396198	
 2013-01 1283	
 # this is where the output of Q4 goes
-
