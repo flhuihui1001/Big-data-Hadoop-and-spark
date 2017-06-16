@@ -16,9 +16,17 @@ def main(argv):
         line = re.split(r"\b:\b",line, 1)[0]
         line = line.split("[",1)[1]
         month = abbr_to_num[line[3:6]]
+<<<<<<< HEAD
         print('Date:'+ line[7:] + "-" + '{:02}'.format(month) + "\t" + "1")
+=======
+        print('Date:'+'{:02}'.format(month) + "-" + line[7:]+ "\t" + "1")
+>>>>>>> 00ced8fd42a3e2318e0d2d6de804889b3f33353e
         
 if __name__ == "__main__":
     main(sys.argv)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 00ced8fd42a3e2318e0d2d6de804889b3f33353e
